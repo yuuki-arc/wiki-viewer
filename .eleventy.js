@@ -3,10 +3,18 @@ const path = require("path");
 
 const CONFIG_PATH = path.join(__dirname, "config.json");
 let VAULT;
+let EXCLUDED_DIRS;
+let EXCLUDED_FILES;
 try {
   const cfg = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
   VAULT = cfg.vault;
   if (!VAULT) throw new Error("config.json is missing the 'vault' key");
+  EXCLUDED_DIRS = new Set(
+    Array.isArray(cfg.excludedDirs) ? cfg.excludedDirs : [".git"]
+  );
+  EXCLUDED_FILES = new Set(
+    Array.isArray(cfg.excludedFiles) ? cfg.excludedFiles : []
+  );
 } catch (err) {
   console.error("[wiki-viewer] " + err.message);
   console.error(
@@ -21,22 +29,6 @@ module.exports = function (eleventyConfig) {
   const readTemplate = () => fs.readFileSync(TEMPLATE_PATH, "utf8");
 
   eleventyConfig.addWatchTarget(path.join(__dirname, "_includes"));
-
-  const EXCLUDED_DIRS = new Set([
-    ".raw",
-    "_templates",
-    ".obsidian",
-    "Excalidraw",
-    ".git",
-    ".claude",
-    "node_modules",
-  ]);
-  const EXCLUDED_FILES = new Set([
-    "CLAUDE.md",
-    "README.md",
-    "karpathy-llm-wiki.md",
-    "2026-04-22.md",
-  ]);
 
   eleventyConfig.addPreprocessor("skip-excluded", "md", (data) => {
     const rel = path.relative(VAULT, data.page.inputPath);

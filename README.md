@@ -78,12 +78,20 @@ wiki-viewer/
 
 ## 除外ルール
 
-以下のディレクトリ・ファイルはインデックス対象外（`.eleventy.js` の `EXCLUDED_DIRS` / `EXCLUDED_FILES` で制御）:
+`config.json` の `excludedDirs` / `excludedFiles` で指定する。デフォルトは `.git` のみ：
 
-- Dirs: `.raw`, `_templates`, `.obsidian`, `Excalidraw`, `.git`, `.claude`, `node_modules`
-- Root files: `CLAUDE.md`, `README.md` 等
+```json
+{
+  "vault": "...",
+  "excludedDirs": [".git"],
+  "excludedFiles": []
+}
+```
 
-別のファイルを除外したい場合は同セットへ追記する。
+- `excludedDirs`: vault 直下に該当名のディレクトリがあれば、その配下を一切インデックスしない（basename 一致）
+- `excludedFiles`: vault 直下のファイル名（`vault/CLAUDE.md` 等）を除外。subdir 配下は対象外
+
+未指定なら `excludedDirs: [".git"]`、`excludedFiles: []` が適用される。
 
 ## 将来の拡張
 
